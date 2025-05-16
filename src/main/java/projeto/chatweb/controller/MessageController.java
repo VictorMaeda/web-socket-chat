@@ -1,7 +1,6 @@
 package projeto.chatweb.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +19,8 @@ public class MessageController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public String sendMessage(@RequestBody Message message) {
-        messageService.sendMessage(message);
+    public String sendMessage(@RequestBody String text) {
+        messageService.sendMessage(text);
         return "Message sent successfully";
     }
 }

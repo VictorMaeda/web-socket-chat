@@ -1,7 +1,8 @@
 package projeto.chatweb.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
+import projeto.chatweb.client.GeminiClient;
 
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,10 @@ import java.util.Map;
 @Service
 public class GeminiService {
 
-    private final WebClient geminiWebClient;
+    private final GeminiClient geminiClient;
 
-    public GeminiService(WebClient geminiWebClient){
-        this.geminiWebClient = geminiWebClient;
+    public GeminiService(GeminiClient geminiClient){
+        this.geminiClient = geminiClient;
     }
 
 
@@ -27,13 +28,10 @@ public class GeminiService {
                 }
         );
 
-        Map response = geminiWebClient.post()
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(Map.class)
-                .block(); // <- aqui a execução será síncrona
+        Map response = geminiClient.gerarConteudo(requestBody);
 
         try {
+
             var candidates = (List<?>) response.get("candidates");
             if (candidates != null && !candidates.isEmpty()) {
                 var first = (Map<?, ?>) candidates.get(0);
@@ -43,6 +41,7 @@ public class GeminiService {
                     return parseBooleanStrict((String) ((Map<?, ?>) parts.get(0)).get("text"));
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

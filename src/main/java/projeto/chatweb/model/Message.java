@@ -4,8 +4,8 @@ package projeto.chatweb.model;
 import java.time.LocalTime;
 import java.util.Date;
 public class Message {
-    public Message(String message, String username){
-        this.message=message;
+    public Message(String text, String username){
+        this.message=text;
         this.username=username;
         this.horario = LocalTime.now();
     }

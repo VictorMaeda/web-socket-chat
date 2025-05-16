@@ -2,6 +2,8 @@ package projeto.chatweb.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import projeto.chatweb.error.BusinessException;
 import projeto.chatweb.model.Message;
@@ -18,9 +20,10 @@ public class MessageService {
         this.geminiService = geminiService;
     }
 
-public void sendMessage(Message message) {
-    if (!geminiService.verificarSeOfensiva(message.getMessage())){
-        messagingTemplate.convertAndSend(nomeSala+"/messages", message);
+
+public void sendMessage(String text) {
+    if (!geminiService.verificarSeOfensiva(text)){
+        messagingTemplate.convertAndSend(nomeSala+"/messages",  new Message(text, ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getClaimAsString("preferred_username")));
     }else{
         throw new BusinessException("Mensagem inválida");
     }
